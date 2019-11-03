@@ -51,3 +51,19 @@ def test_decorator_attribute():
     assert len(abc_def.getters) == 1
     assert abc_def.getters['first'] == first
     assert abc_def.first == 42
+
+def test_decorator_attribute_cache():
+    """ Test that the getter is called only once """
+    abc_def = Concatenation('abc', 'def')
+
+    mock_first = MagicMock()
+    @attribute(abc_def)
+    def first(self):
+        mock_first()
+        return 42
+
+    assert len(abc_def.getters) == 1
+    assert abc_def.getters['first'] == first
+    assert abc_def.first == 42
+    assert abc_def.first == 42
+    mock_first.assert_called_once()
