@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from grammar import Alternation, Concatenation, Repetition, add_action
+from grammar import Alternation, Concatenation, Repetition, add_action, attribute
 
 def test_alternation_append():
     alternation = Alternation()
@@ -40,3 +40,14 @@ def test_decorator_add_action():
 
     assert len(abc_def.actions) == 1
     assert abc_def.actions[0] == _action
+
+def test_decorator_attribute():
+    abc_def = Concatenation('abc', 'def')
+
+    @attribute(abc_def)
+    def first(self):
+        return 42
+
+    assert len(abc_def.getters) == 1
+    assert abc_def.getters['first'] == first
+    assert abc_def.first == 42

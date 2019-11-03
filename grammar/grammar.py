@@ -3,10 +3,22 @@ _implicit_separator = None
 class Base:
     def __init__(self):
         self.actions = []
+        self.getters = {}
+
+    def __getattr__(self, name):
+        try:
+            _value = self.getters[name](self)
+            setattr(self, name, _value)     # Cache the value to avoid calling the getter again
+            return _value
+        except KeyError:
+            raise AttributeError(f"Rule has no attribute named {name}")
 
     def add_action(self, callable):
         self.actions.append(callable)
         return self
+
+    def add_getter(self, name, callable):
+        self.getters[name] = callable
 
 class Repeatable:
     @property
@@ -108,6 +120,14 @@ def add_action(pattern):
     """ A decorator for adding an action to a grammar-element """
     def decorator(func):
         pattern.add_action(func)
+        return func
+
+    return decorator
+
+def attribute(pattern):
+    """ A decorator for adding an attribute getter to a grammar-element"""
+    def decorator(func):
+        pattern.add_getter(func.__name__, func)
         return func
 
     return decorator
