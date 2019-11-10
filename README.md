@@ -30,6 +30,20 @@ concatenated = Concatenation('abc', 'def', 'xyz')	# Matches "abcdefxyz"
 Repetition.any(choice)					# Matches any number of "abc", or "def", or "xyz"
 ```
 
+### Lists
+
+Many grammars, especially grammars for programming languages, make extensive use of lists of elements. For instance, the argument lists for function definitions result in grammar elements that are repetitions of some element separated by some other element. The resulting grammar can be messy, especially when the list elements are complex. To make life easier, _grammar_ includes a convenience method for generating list-like grammar elements.
+
+```python
+List('abc', separator=',')		# => Concatenation('abc', Concatenation(',', 'abc')).any)
+List('abc', 'def', separator=',')	# => Concatenation(items := Alternation('abc', 'def'), Concatenation(',', items).any)
+
+# Separators are optional
+List('abc')				# => Repetition.any('abc')
+List('abc', 'def')			# => Alternation('abc', 'def').any
+```
+
+
 ### Repetitions
 
 Repetitions are used extensively in many grammars and the syntax above can be rather unwieldy, even when used sparingly. To make things easier, the rule objects created by both `Alternation()` and `Concatenation()` have convenience methods for creating repetitions of the underlying grammar elements

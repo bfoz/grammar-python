@@ -136,3 +136,11 @@ def implicit_separator(separator):
     """ Set the implicit separator that's assumed to be between every element of a Concatenation """
     global _implicit_separator
     _implicit_separator = separator
+
+def List(*args, separator=None):
+    """ Generate the appropriate grammar elements for parsing a list of items"""
+    items = Alternation(*args) if len(args) > 1 else args[0]
+    if separator:
+        return Concatenation(items, Concatenation(separator, items).any)
+    else:
+        return Repetition.any(items)

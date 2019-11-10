@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from grammar import Alternation, Concatenation, Repetition, add_action, attribute
+from grammar import Alternation, Concatenation, List, Repetition, add_action, attribute
 
 def test_alternation_append():
     alternation = Alternation()
@@ -13,6 +13,19 @@ def test_concatenation_append():
     concatenation = Concatenation()
     concatenation.append('abc')
     assert concatenation == Concatenation('abc')
+
+def test_list_single_item():
+    assert List('abc', separator=',') == Concatenation('abc', Concatenation(',', 'abc').any)
+
+def test_list_single_item_no_separator():
+    assert List('abc') == Repetition.any('abc')
+
+def test_list_multiple_items():
+    items = Alternation('abc', 'def')
+    assert List('abc', 'def', separator=',') == Concatenation(items, Concatenation(',', items).any)
+
+def test_list_multiple_items_no_separator():
+    assert List('abc', 'def') == Alternation('abc', 'def').any
 
 def test_repetition_attributes():
     assert Repetition('abc', 42, 24).element == 'abc'
