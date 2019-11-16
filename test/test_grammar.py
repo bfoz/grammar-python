@@ -16,6 +16,7 @@ def test_concatenation_append():
 
 def test_list_single_item():
     assert List('abc', separator=',') == Concatenation('abc', Concatenation(',', 'abc').any)
+    assert List('abc', separator=',').getters.get('__iter__')
 
 def test_list_single_item_no_separator():
     assert List('abc') == Repetition.any('abc')
