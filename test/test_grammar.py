@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+import grammar
 from grammar import Alternation, Concatenation, List, Repetition, add_action, attribute
 
 def test_alternation_append():
@@ -13,6 +14,35 @@ def test_concatenation_append():
     concatenation = Concatenation()
     concatenation.append('abc')
     assert concatenation == Concatenation('abc')
+
+def test_concatenation_separator():
+    concatenation = Concatenation('abc', separator=' ')
+    assert concatenation.separator == ' '
+
+def test_concatenation_no_separator():
+    """ The implicit separator is not set and no explicit separator was given """
+    concatenation = Concatenation('abc')
+    assert concatenation.separator == None
+
+def test_concatenation_implicit_separator():
+    grammar.implicit_separator(',')
+    concatenation = Concatenation('abc')
+    assert concatenation.separator == ','
+    grammar.implicit_separator(None)
+
+def test_concatenation_disable_separator():
+    """ An implicit separator was set and is disabled by an explicit separator """
+    grammar.implicit_separator(',')
+    concatenation = Concatenation('abc', separator=None)
+    assert concatenation.separator == None
+    grammar.implicit_separator(None)
+
+def test_concatenation_override_separator():
+    """ An implicit separator was set and is overridden by an explicit separator """
+    grammar.implicit_separator(',')
+    concatenation = Concatenation('abc', separator='.')
+    assert concatenation.separator == '.'
+    grammar.implicit_separator(None)
 
 def test_list_single_item():
     assert List('abc', separator=',') == Concatenation('abc', Concatenation(',', 'abc').any)

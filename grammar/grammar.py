@@ -55,12 +55,15 @@ class Alternation(Base, Repeatable):
         return self.elements.append(item)
 
 class Concatenation(Base, Repeatable):
-    def __init__(self, *elements):
+    def __init__(self, *elements, separator=False):
         super().__init__()
         self.elements = list(elements)
 
-        # Capture the separator that was in effect at the time of construction
-        self.separator = _implicit_separator
+        # Capture the separator that was in effect at the time of construction, unless it's explicitly disabled
+        if separator is None:
+            self.separator = None
+        else:
+            self.separator = separator or _implicit_separator
 
     def __getitem__(self, key):
         return self.elements[key]
