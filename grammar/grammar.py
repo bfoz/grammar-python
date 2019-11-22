@@ -140,12 +140,15 @@ def implicit_separator(separator):
     global _implicit_separator
     _implicit_separator = separator
 
-def List(*args, separator=None):
+def List(*args, separator=None, trailing_separator=None):
     """ Generate the appropriate grammar elements for parsing a list of items"""
     items = Alternation(*args) if len(args) > 1 else args[0]
 
     if separator:
-        _list = Concatenation(items, Concatenation(separator, items).any)
+        if trailing_separator is not None:
+            _list = Concatenation(items, Concatenation(separator, items).any, Repetition.optional(separator))
+        else:
+            _list = Concatenation(items, Concatenation(separator, items).any)
 
         if len(args) > 1:
             @attribute(_list)

@@ -58,6 +58,10 @@ def test_list_multiple_items():
 def test_list_multiple_items_no_separator():
     assert List('abc', 'def') == Alternation('abc', 'def').any
 
+def test_list_multiple_items_trailing_separator():
+    items = Alternation('abc', 'def')
+    assert List('abc', 'def', separator=',', trailing_separator=True) == Concatenation(items, Concatenation(',', items).any, Repetition.optional(','))
+
 def test_repetition_attributes():
     assert Repetition('abc', 42, 24).element == 'abc'
     assert Repetition('abc', 42, 24).maximum == 42
