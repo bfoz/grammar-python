@@ -28,6 +28,7 @@ setup(
     ],
     keywords='recursive descent parser parse parsing grammar',
     package_dir={'':'grammar'},
+    py_modules=['grammar'],
     python_requires='>=3',
     project_urls={
         'Bug Reports': 'https://github.com/bfoz/grammar-python/issues',
